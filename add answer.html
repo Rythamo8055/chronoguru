@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Answer</title>
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #f3e7e9, #e3eeff, #e3eeff, #f3e7e9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab:hover {
+            background-color: #e0e0e0;
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #6e8efb, #a777e3);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .upload-area.highlight {
+            border-color: #6e8efb;
+            background-color: rgba(110, 142, 251, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        #preview, #videoPreview {
+            max-width: 100%;
+            margin-top: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        #uploadAnswerBtn {
+            display: none;
+            margin: 1rem auto 0;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+
+        #uploadAnswerBtn:hover {
+            background: linear-gradient(45deg, #45a049, #4CAF50);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+
+        .btn, .upload-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover, .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-email, .upload-btn {
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+        }
+
+        #uploadAnswerBtn {
+            display: none;
+            margin: 1rem auto 0;
+        }
+
+        .tab {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">&larr;</button>
+    <div class="container">
+        <h1>Upload Answer</h1>
+        <div class="tab-container">
+            <button class="tab active" data-tab="image">Image</button>
+            <button class="tab" data-tab="video">Video</button>
+        </div>
+        <div id="imageTab" class="tab-content active">
+            <div class="upload-area" id="imageDropArea">
+                <p>Drag & Drop your image here or</p>
+                <input type="file" id="imageFileElem" accept="image/*" style="display:none">
+                <button class="btn btn-email" id="imageFileSelect">Select an image</button>
+            </div>
+            <div class="preview-container">
+                <img id="preview" src="" alt="Image preview">
+            </div>
+        </div>
+        <div id="videoTab" class="tab-content">
+            <div class="upload-area" id="videoDropArea">
+                <p>Drag & Drop your video here or</p>
+                <input type="file" id="videoFileElem" accept="video/*" style="display:none">
+                <button class="btn btn-email" id="videoFileSelect">Select a video</button>
+            </div>
+            <div class="preview-container">
+                <video id="videoPreview" controls></video>
+            </div>
+        </div>
+        <button class="btn btn-email" id="uploadAnswerBtn">Upload Answer</button>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const imageDropArea = document.getElementById('imageDropArea');
+        const videoDropArea = document.getElementById('videoDropArea');
+        const imageFileElem = document.getElementById('imageFileElem');
+        const videoFileElem = document.getElementById('videoFileElem');
+        const imageFileSelect = document.getElementById('imageFileSelect');
+        const videoFileSelect = document.getElementById('videoFileSelect');
+        const preview = document.getElementById('preview');
+        const videoPreview = document.getElementById('videoPreview');
+        const uploadAnswerBtn = document.getElementById('uploadAnswerBtn');
+
+        // Tab functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+
+        // Drag and drop functionality
+        [imageDropArea, videoDropArea].forEach(area => {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                area.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, unhighlight, false);
+            });
+
+            area.addEventListener('drop', handleDrop, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            this.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            this.classList.remove('highlight');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files, this.id === 'imageDropArea' ? 'image' : 'video');
+        }
+
+        imageFileSelect.addEventListener('click', () => {
+            imageFileElem.click();
+        });
+
+        videoFileSelect.addEventListener('click', () => {
+            videoFileElem.click();
+        });
+
+        imageFileElem.addEventListener('change', (e) => {
+            handleFiles(e.target.files, 'image');
+        });
+
+        videoFileElem.addEventListener('change', (e) => {
+            handleFiles(e.target.files, 'video');
+        });
+
+        function handleFiles(files, type) {
+            const file = files[0];
+            if (type === 'image' && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    videoPreview.style.display = 'none';
+                    uploadAnswerBtn.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else if (type === 'video' && file.type.startsWith('video/')) {
+                const url = URL.createObjectURL(file);
+                videoPreview.src = url;
+                videoPreview.style.display = 'block';
+                preview.style.display = 'none';
+                uploadAnswerBtn.style.display = 'block';
+            } else {
+                alert(`Please upload a valid ${type} file.`);
+            }
+        }
+
+        uploadAnswerBtn.addEventListener('click', () => {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            let file;
+            if (activeTab === 'image') {
+                file = imageFileElem.files[0];
+                if (!file) {
+                    alert('Please upload an image first.');
+                    return;
+                }
+            } else {
+                file = videoFileElem.files[0];
+                if (!file) {
+                    alert('Please upload a video first.');
+                    return;
+                }
+            }
+            
+            // Here you would typically send the file to your server
+            // For now, we'll just simulate the upload process
+            uploadAnswerBtn.textContent = 'Uploading...';
+            uploadAnswerBtn.disabled = true;
+            
+            // Simulating file upload with FormData
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', activeTab);
+
+            // Simulating an AJAX request
+            setTimeout(() => {
+                console.log('File uploaded:', file.name);
+                console.log('File type:', activeTab);
+                alert('Answer uploaded successfully!');
+                resetPage();
+            }, 2000);
+
+            // In a real scenario, you would use fetch or XMLHttpRequest like this:
+            /*
+            fetch('/upload-answer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Answer uploaded successfully!');
+                resetPage();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while uploading the answer.');
+            })
+            .finally(() => {
+                uploadAnswerBtn.textContent = 'Upload Answer';
+                uploadAnswerBtn.disabled = false;
+            });
+            */
+        });
+
+        function resetPage() {
+            preview.src = '';
+            preview.style.display = 'none';
+            videoPreview.src = '';
+            videoPreview.style.display = 'none';
+            imageFileElem.value = '';
+            videoFileElem.value = '';
+            uploadAnswerBtn.style.display = 'none';
+            uploadAnswerBtn.textContent = 'Upload Answer';
+            uploadAnswerBtn.disabled = false;
+        }
+
+        function goBack() {
+            window.location.href = 'home page.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

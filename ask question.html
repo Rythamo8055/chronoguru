@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask a Question - ChronoGuru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(-45deg, 
+                #C46316,  /* Maple */
+                #D88C4A,  /* Medium Maple */
+                #E6A96B,  /* Light Maple */
+                #F0D2B4   /* Very Light Maple */
+            );
+            background-size: 100% 100%;
+            animation: gradientBG 20s ease infinite;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        .container {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.9),
+                rgba(255, 255, 255, 0.5)
+            );
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .tab:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .upload-area.highlight {
+            border-color: #6e8efb;
+            background-color: rgba(101, 136, 249, 0.1);
+            transform: scale(1.02);
+        }
+
+        #questionInput {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        #questionInput:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 10px rgba(110, 142, 251, 0.3);
+        }
+
+        .submit-btn {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #C46316, #A0500F);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #preview {
+            max-width: 100%;
+            margin-top: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #preview:hover {
+            transform: scale(1.02);
+        }
+
+        #responseContainer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Add these new styles */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #4f46e5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="goBack()">&larr;</button>
+    <div class="container">
+        <h1>Ask a Question</h1>
+        <div class="tab-container">
+            <button class="tab active" data-tab="text">Text Question</button>
+            <button class="tab" data-tab="image">Image Upload</button>
+        </div>
+        <div id="textTab" class="tab-content active">
+            <textarea id="questionInput" placeholder="Type your question here..."></textarea>
+        </div>
+        <div id="imageTab" class="tab-content">
+            <div class="upload-area" id="drop-area">
+                <p>Drag & Drop your image here or</p>
+                <input type="file" id="fileElem" accept="image/*" style="display:none">
+                <button class="submit-btn" id="fileSelect">Select an image</button>
+            </div>
+            <img id="preview" src="" alt="Image preview" style="display:none">
+        </div>
+        <button class="submit-btn" id="submitBtn">Submit Question</button>
+        <div id="responseContainer">
+            <h3>Response:</h3>
+            <p id="responseText"></p>
+        </div>
+    </div>
+
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileElem = document.getElementById('fileElem');
+        const fileSelect = document.getElementById('fileSelect');
+        const preview = document.getElementById('preview');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const questionInput = document.getElementById('questionInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const responseContainer = document.getElementById('responseContainer');
+        const responseText = document.getElementById('responseText');
+
+        // Tab functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('highlight');
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        fileSelect.addEventListener('click', () => {
+            fileElem.click();
+        });
+
+        fileElem.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please upload an image file.');
+            }
+        }
+
+        // Submit button functionality
+        submitBtn.addEventListener('click', () => {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            let question = '';
+            
+            if (activeTab === 'text') {
+                question = questionInput.value.trim();
+                if (question === '') {
+                    alert('Please enter a question.');
+                    return;
+                }
+            } else {
+                if (!preview.src) {
+                    alert('Please upload an image first.');
+                    return;
+                }
+                question = 'Image question: ' + preview.src;
+            }
+            
+            // Simulate sending question to server and getting response
+            simulateResponse(question);
+        });
+
+        function simulateResponse(question) {
+            // In a real application, you would send the question to a server here
+            // For this example, we'll just simulate a response after a short delay
+            responseContainer.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            setTimeout(() => {
+                const response = `Thank you for your question: "${question}". Our experts will review it and provide an answer soon.`;
+                responseText.textContent = response;
+                responseContainer.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Question';
+            }, 2000);
+        }
+
+        // Add this at the end of the script
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '1';
+        });
+
+        function goBack() {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = 'home page.html';
+            }, 500);
+        }
+    </script>
+</body>
+</html>

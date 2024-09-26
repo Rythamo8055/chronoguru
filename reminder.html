@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Reminder - ChronoGuru</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #f3e7e9, #e3eeff, #e3eeff, #f3e7e9);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 1000px;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: calc(45% - 1rem);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .or-separator {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 0 1rem;
+        }
+
+        .or-separator::before,
+        .or-separator::after {
+            content: '';
+            width: 2px;
+            height: 50px;
+            background-color: #333;
+            margin: 10px 0;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"], input[type="datetime-local"] {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 2px solid #a07f65;
+            border-radius: 25px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="text"]:focus, input[type="datetime-local"]:focus {
+            border-color: #4285F4;
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+            background-color: #fff;
+        }
+
+        .reminder-level {
+            margin-bottom: 1.5rem;
+        }
+
+        .reminder-level h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .reminder-level label {
+            margin-right: 1rem;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn, .upload-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+            margin-top: 1rem;
+        }
+
+        .btn:hover, .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+            display: none;
+        }
+
+        .upload-area.highlight {
+            border-color: #6e8efb;
+            background-color: rgba(101, 136, 249, 0.1);
+        }
+
+        #preview {
+            max-width: 100%;
+            margin-top: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateY(-100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 90%;
+            width: 350px;
+        }
+
+        #notification.show {
+            animation: slideIn 0.5s forwards, pulse 2s infinite;
+        }
+
+        #notification.hide {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .set-reminder-btn {
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .set-reminder-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                flex-direction: column;
+            }
+
+            .card {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+
+            .or-separator {
+                flex-direction: row;
+                margin: 1rem 0;
+            }
+
+            .or-separator::before,
+            .or-separator::after {
+                width: 50px;
+                height: 2px;
+                margin: 0 10px;
+            }
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #8e9eab, #eef2f3);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #fileInfo {
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .reminder-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #4285F4, #34A853);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(50px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Set a Reminder</h1>
+        <div class="card-container">
+            <div class="card">
+                <h2>Manual Reminder</h2>
+                <form id="reminderForm" class="reminder-form">
+                    <div class="input-group">
+                        <input type="text" id="reminderTitle" placeholder="Reminder Title" required>
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="datetime-local" id="reminderDateTime" required>
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="reminder-level">
+                        <h3>Reminder Level</h3>
+                        <label><input type="radio" name="level" value="low"> Low</label>
+                        <label><input type="radio" name="level" value="medium" checked> Medium</label>
+                        <label><input type="radio" name="level" value="high"> High</label>
+                    </div>
+                </form>
+            </div>
+            <div class="or-separator">OR</div>
+            <div class="card">
+                <h2>Data/Table Upload Reminder</h2>
+                <button id="uploadBtn" class="upload-btn">Upload Data/Table</button>
+                <div class="upload-area" id="drop-area">
+                    <p>Drag & Drop your file here or</p>
+                    <input type="file" id="fileElem" accept=".csv,.xlsx,.xls" style="display:none">
+                    <button class="upload-btn" id="fileSelect">Select a file</button>
+                </div>
+                <div id="fileInfo"></div>
+                <div class="reminder-level">
+                    <h3>Notification Level</h3>
+                    <label><input type="radio" name="dataLevel" value="low"> Low</label>
+                    <label><input type="radio" name="dataLevel" value="medium" checked> Medium</label>
+                    <label><input type="radio" name="dataLevel" value="high"> High</label>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button id="setReminderBtn" class="set-reminder-btn">Set Reminder</button>
+        </div>
+    </div>
+
+    <div id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        document.getElementById('reminderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('reminderTitle').value;
+            const dateTime = document.getElementById('reminderDateTime').value;
+            const level = document.querySelector('input[name="level"]:checked').value;
+            
+            console.log('Manual Reminder set:', { title, dateTime, level });
+            
+            showNotification(`Manual Reminder "${title}" set for ${dateTime} with ${level} priority`);
+        });
+
+        const uploadBtn = document.getElementById('uploadBtn');
+        const dropArea = document.getElementById('drop-area');
+        const fileElem = document.getElementById('fileElem');
+        const fileSelect = document.getElementById('fileSelect');
+        const fileInfo = document.getElementById('fileInfo');
+
+        uploadBtn.addEventListener('click', () => {
+            dropArea.style.display = dropArea.style.display === 'none' ? 'block' : 'none';
+        });
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('highlight');
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        fileSelect.addEventListener('click', () => {
+            fileElem.click();
+        });
+
+        fileElem.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            const validTypes = ['.csv', '.xlsx', '.xls'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (validTypes.includes(fileExtension)) {
+                fileInfo.textContent = `File selected: ${file.name}`;
+                const level = document.querySelector('input[name="dataLevel"]:checked').value;
+                showNotification(`Data/Table uploaded successfully with ${level} priority`);
+            } else {
+                showNotification('Please upload a valid CSV or Excel file', 'error');
+                fileInfo.textContent = '';
+            }
+        }
+
+        document.getElementById('setReminderBtn').addEventListener('click', function() {
+            const manualTitle = document.getElementById('reminderTitle').value;
+            const manualDateTime = document.getElementById('reminderDateTime').value;
+            const manualLevel = document.querySelector('input[name="level"]:checked').value;
+            
+            const dataUploaded = fileInfo.textContent !== '';
+            const dataLevel = document.querySelector('input[name="dataLevel"]:checked').value;
+
+            if (manualTitle && manualDateTime) {
+                console.log('Manual Reminder set:', { manualTitle, manualDateTime, manualLevel });
+                showNotification(`Manual Reminder "${manualTitle}" set for ${manualDateTime} with ${manualLevel} priority`);
+                scheduleReminder(manualTitle, manualDateTime, manualLevel);
+            } else if (dataUploaded) {
+                console.log('Data/Table Reminder set:', { dataLevel });
+                showNotification(`Data/Table Reminder set with ${dataLevel} priority`);
+                scheduleDataReminder(dataLevel);
+            } else {
+                showNotification('Please fill in reminder details or upload a data file', 'error');
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            notificationText.textContent = message;
+            notification.className = type === 'error' ? 'error' : 'success';
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                notification.classList.add('hide');
+                setTimeout(() => {
+                    notification.classList.remove('hide');
+                }, 500);
+            }, 3000);
+        }
+
+        function scheduleReminder(title, dateTime, level) {
+            const reminderTime = new Date(dateTime).getTime();
+            const now = new Date().getTime();
+            const timeUntilReminder = reminderTime - now;
+
+            if (timeUntilReminder > 0) {
+                setTimeout(() => {
+                    showReminderNotification(title, level);
+                }, timeUntilReminder);
+            }
+        }
+
+        function scheduleDataReminder(level) {
+            // For demonstration purposes, we'll set the data reminder to trigger after 10 seconds
+            setTimeout(() => {
+                showReminderNotification('Data/Table Reminder', level);
+            }, 10000);
+        }
+
+        function showReminderNotification(title, level) {
+            const notification = document.createElement('div');
+            notification.className = 'reminder-notification';
+            notification.innerHTML = `
+                <h3>${title}</h3>
+                <p>Priority: ${level}</p>
+            `;
+            document.body.appendChild(notification);
+
+            notification.style.animation = 'slideIn 0.5s forwards, pulse 2s infinite';
+
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s forwards';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
