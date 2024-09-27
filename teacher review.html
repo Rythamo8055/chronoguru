@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Review - ChronoGuru</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(-45deg, 
+                #C46316,  /* Maple */
+                #D88C4A,  /* Medium Maple */
+                #E6A96B,  /* Light Maple */
+                #F0D2B4   /* Very Light Maple */
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 30s ease infinite;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .review-container {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.9),
+                rgba(255, 255, 255, 0.5)
+            );
+            border-radius: 20px;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(196, 99, 22, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .cards-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-snap-type: x mandatory;
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            flex: 0 0 auto;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(196, 99, 22, 0.1);
+            scroll-snap-align: start;
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            color: #C46316;
+            margin-top: 0;
+        }
+
+        .card p {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateX(100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .card {
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+
+        .review-item {
+            margin-bottom: 2rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            font-size: 1.5rem;
+            color: #C46316;
+        }
+
+        .star {
+            cursor: pointer;
+        }
+
+        .approval {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .checkbox-label input {
+            margin-right: 0.5rem;
+        }
+
+        .comment {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #C46316;
+            border-radius: 25px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.8);
+            resize: vertical;
+        }
+
+        .comment:focus {
+            border-color: #C04000;
+            box-shadow: 0 0 0 3px rgba(192, 64, 0, 0.1);
+        }
+
+        .qa-button {
+            background: linear-gradient(to right, #C46316, #A0500F);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .qa-button:hover {
+            background: linear-gradient(to right, #A0500F, #C46316);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(192, 64, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #qaImage {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        @media (max-width: 480px) {
+            .review-container {
+                width: 90%;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="review-container">
+        <h1>Teacher Review</h1>
+        
+        <div class="cards-container">
+            <div class="card">
+                <h3>Thermodynamics</h3>
+                <p>What is the First Law of Thermodynamics and how does it relate to energy conservation?</p>
+            </div>
+            <div class="card">
+                <h3>Fluid Mechanics</h3>
+                <p>Explain the concept of Reynolds Number and its significance in fluid flow analysis.</p>
+            </div>
+            <div class="card">
+                <h3>Structural Engineering</h3>
+                <p>What are the primary types of loads considered in structural design, and how do they differ?</p>
+            </div>
+            <div class="card">
+                <h3>Control Systems</h3>
+                <p>Describe the difference between open-loop and closed-loop control systems with examples.</p>
+            </div>
+        </div>
+
+        <div class="review-item">
+            <div class="review-header">
+                <div class="rating">
+                    <span class="star" data-rating="1">☆</span>
+                    <span class="star" data-rating="2">☆</span>
+                    <span class="star" data-rating="3">☆</span>
+                    <span class="star" data-rating="4">☆</span>
+                    <span class="star" data-rating="5">☆</span>
+                </div>
+                <div class="approval">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="approve"> Approve
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="disapprove"> Disapprove
+                    </label>
+                </div>
+            </div>
+            <textarea class="comment" rows="4" placeholder="Enter your review comments here..."></textarea>
+        </div>
+        <button class="qa-button" id="seeQAButton">See Q/A</button>
+    </div>
+
+    <div id="qaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Question and Answer</h2>
+            <img id="qaImage" src="" alt="Q/A Image">
+        </div>
+    </div>
+
+    <script>
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = star.dataset.rating;
+                stars.forEach(s => {
+                    s.textContent = s.dataset.rating <= rating ? '★' : '☆';
+                });
+            });
+        });
+
+        // Q/A Modal functionality
+        const modal = document.getElementById('qaModal');
+        const btn = document.getElementById('seeQAButton');
+        const span = document.getElementsByClassName('close')[0];
+        const qaImage = document.getElementById('qaImage');
+
+        btn.onclick = function() {
+            modal.style.display = 'block';
+            // Array of random image URLs (replace with your actual image URLs)
+            const randomImages = [
+                'https://example.com/image1.jpg',
+                'https://example.com/image2.jpg',
+                'https://example.com/image3.jpg',
+            ];
+            const randomImage = randomImages[Math.floor(Math.random() * randomImages.length)];
+            qaImage.src = randomImage;
+        }
+
+        span.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Ensure only one checkbox can be checked at a time
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                checkboxes.forEach(cb => {
+                    if (cb !== checkbox) cb.checked = false;
+                });
+            });
+        });
+
+        // Add horizontal scroll with mouse wheel
+        const cardsContainer = document.querySelector('.cards-container');
+        cardsContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            cardsContainer.scrollLeft += e.deltaY;
+        });
+    </script>
+</body>
+</html>
