@@ -20,13 +20,14 @@
                 #E6A96B,  /* Light Maple */
                 #F0D2B4   /* Very Light Maple */
             );
-            background-size: 100% 100%;
-            animation: gradientBG 25s ease infinite;
+            background-size: 400% 400%;
+            animation: gradientBG 30s ease infinite;
             min-height: 100vh;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
 
         .header {
@@ -69,6 +70,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            flex: 1;
         }
 
         .hero h1 {
@@ -193,6 +195,95 @@
             animation: fadeOut 0.5s ease-out forwards;
         }
         
+        .slider-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            overflow: hidden;
+            position: relative;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider {
+            display: flex;
+            transition: none;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #fff;
+            text-align: center;
+        }
+
+        .slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #C46316;
+        }
+
+        .slide p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .slider-nav {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .slider-nav-item {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-nav-item.active {
+            background-color: #C46316;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .simple-footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            color: #4b5563;
+            width: 100%;
+        }
+
+        .simple-footer a {
+            color: #C46316;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .simple-footer a:hover {
+            color: #A0500F;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
@@ -209,6 +300,33 @@
     <div class="hero">
         <h1>Welcome to ChronoGuru</h1>
         <p>Your ultimate time management companion. Organize, learn, and share productivity tips with our community.</p>
+        
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide">
+                    <h2>Upload Images & Text</h2>
+                    <p>Easily upload and organize your study materials, notes, and images all in one place.</p>
+                </div>
+                <div class="slide">
+                    <h2>Ask Questions</h2>
+                    <p>Get answers to your burning questions from our community of experts and fellow learners.</p>
+                </div>
+                <div class="slide">
+                    <h2>Share Your Knowledge</h2>
+                    <p>Help others by uploading answers and sharing your expertise with the community.</p>
+                </div>
+                <div class="slide">
+                    <h2>Set Reminders</h2>
+                    <p>Never miss a deadline with our smart reminder system. Stay on top of your tasks and goals.</p>
+                </div>
+                <div class="slide">
+                    <h2>Teacher Reviews</h2>
+                    <p>Get valuable feedback from experienced educators to improve your learning journey.</p>
+                </div>
+            </div>
+            <div class="slider-nav"></div>
+        </div>
+
         <div class="content-cards">
             <div class="content-card">
                 <svg class="card-illustration" viewBox="0 0 200 150">
@@ -289,6 +407,18 @@
         </div>
     </div>
 
+    <div class="simple-footer">
+        <div>
+            <a href="https://www.facebook.com" target="_blank">Facebook</a>
+            <a href="https://www.twitter.com" target="_blank">Twitter</a>
+            <a href="https://www.instagram.com" target="_blank">Instagram</a>
+            <a href="mailto:info@chronoguru.com">info@chronoguru.com</a>
+        </div>
+        <div>
+            &copy; 2023 ChronoGuru. All rights reserved.
+        </div>
+    </div>
+
     <script>
         function redirectToImageUploader() {
             redirectWithFadeOut('image uploader.html');
@@ -324,6 +454,35 @@
                 window.location.href = page;
             }, 500);
         }
+
+        // Modified slider functionality
+        const slider = document.querySelector('.slider');
+        const slides = document.querySelectorAll('.slide');
+        const sliderNav = document.querySelector('.slider-nav');
+        let currentSlide = 0;
+
+        // Create navigation dots
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('slider-nav-item');
+            dot.addEventListener('click', () => goToSlide(index));
+            sliderNav.appendChild(dot);
+        });
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            document.querySelectorAll('.slider-nav-item').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        // Initial update
+        updateSlider();
     </script>
 </body>
 </html>
